@@ -30,6 +30,7 @@
 
             if (form.passwordConfirm.value != form.password.value) {
                 alert('비밀번호가 일치하지 않습니다.')
+                form.passwordConfirm.focus();
                 return;
             }
 
