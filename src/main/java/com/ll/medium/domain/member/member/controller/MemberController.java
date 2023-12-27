@@ -26,16 +26,17 @@ public class MemberController {
         return "domain/member/member/join";
     }
 
-    @Getter
     @Setter
+    @Getter
     public static class JoinForm {
         @NotBlank
         private String username;
         @NotBlank
         private String password;
     }
+
     @PostMapping("/join")
-    public String signup(@Valid JoinForm joinForm) {
+    public String join(@Valid JoinForm joinForm) {
         RsData<Member> joinRs = memberService.join(joinForm.getUsername(), joinForm.getPassword());
 
         return rq.redirectOrBack(joinRs, "/member/login");
