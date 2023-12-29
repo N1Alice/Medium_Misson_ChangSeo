@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 formLogin
                                         .loginPage("/member/login")
                                         .defaultSuccessUrl("/?msg=" + URLEncoder.encode("환영합니다.", StandardCharsets.UTF_8))
+
                 );
 
         return http.build();
