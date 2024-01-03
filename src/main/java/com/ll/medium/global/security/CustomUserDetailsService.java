@@ -33,18 +33,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Member member = opMember.get();
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
-
-        authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
-
-        if ("admin".equals(username)) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }
-
         return new User(
                 member.getUsername(),
                 member.getPassword(),
-                authorities
+                member.getAuthorities()
         );
     }
 }
