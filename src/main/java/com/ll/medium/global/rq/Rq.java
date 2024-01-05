@@ -13,6 +13,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -74,5 +75,9 @@ public class Rq {
                 .getAuthorities()
                 .stream()
                 .anyMatch(it -> it.getAuthority().equals("ROLE_ADMIN"));
+    }
+
+    public void setAttribute(String key, Object value) {
+        request.setAttribute(key, value);
     }
 }
