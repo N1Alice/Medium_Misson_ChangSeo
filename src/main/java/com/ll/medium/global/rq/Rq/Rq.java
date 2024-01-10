@@ -1,7 +1,10 @@
 package com.ll.medium.global.rq.Rq;
 
+import com.ll.medium.domain.member.member.entity.Member;
 import com.ll.medium.global.rsData.RsData;
+import com.ll.medium.global.security.SecurityUser;
 import com.ll.medium.standard.util.Ut.Ut;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,31 +23,39 @@ import java.util.Optional;
 public class Rq {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
+    private final EntityManager entityManager;
+    private Member member;
     public String redirect(String url, String msg) {
         msg = URLEncoder.encode(msg, StandardCharsets.UTF_8);
+
         StringBuilder sb = new StringBuilder();
+
         sb.append("redirect:");
         sb.append(url);
+
         if (msg != null) {
             sb.append("?msg=");
             sb.append(msg);
         }
+
         return sb.toString();
     }
     public String historyBack(String msg) {
         request.setAttribute("failMsg", msg);
+
         return "global/js";
     }
     public String redirectOrBack(RsData<?> rs, String path) {
         if (rs.isFail()) return historyBack(rs.getMsg());
+
         return redirect(path, rs.getMsg());
     }
-    public User getUser() {
+    public SecurityUser getUser() {
         return Optional.ofNullable(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)
-                .filter(it -> it instanceof User)
-                .map(it -> (User) it)
+                .filter(it -> it instanceof SecurityUser)
+                .map(it -> (SecurityUser) it)
                 .orElse(null);
     }
     public boolean isLogin() {
@@ -55,6 +66,7 @@ public class Rq {
     }
     public boolean isAdmin() {
         if (isLogout()) return false;
+
         return getUser()
                 .getAuthorities()
                 .stream()
@@ -74,5 +86,15 @@ public class Rq {
         queryString = Ut.url.deleteQueryParam(queryString, paramName);
 
         return queryString;
+    }
+
+    public Member getMember() {
+        if ( isLogout() ) return null;
+
+        if ( member == null ) {
+            member = entityManager.getReference(Member.class, getUser().getId());
+        }
+
+        return member;
     }
 }
